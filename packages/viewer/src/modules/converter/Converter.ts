@@ -294,6 +294,19 @@ export default class Coverter {
     )
   }
 
+  private getBlockDefinition(obj) {
+    return (
+      obj['definition'] ||
+      obj['@blockDefinition'] ||
+      obj['blockDefinition'] ||
+      obj['@definition']
+    )
+  }
+
+  private getBlockDefinitionGeometry(obj) {
+    return obj['geometry'] || obj['@geometry']
+  }
+
   /**
    * 
     NODES
@@ -304,10 +317,14 @@ export default class Coverter {
   }
 
   private async BlockInstanceToNode(obj, node) {
-    const definition = await this.resolveReference(obj.blockDefinition)
+    const definition = await this.resolveReference(this.getBlockDefinition(obj))
     node.model.raw.definition = definition
-    for (const def of definition.geometry) {
+    const definitionGeometry = this.getBlockDefinitionGeometry(
+      node.model.raw.definition
+    )
+    for (const def of definitionGeometry) {
       const ref = await this.resolveReference(def)
+      ref.id = ref.id + node.model.raw.transform.id
       const childNode: TreeNode = WorldTree.getInstance().parse({
         id: this.getNodeId(ref),
         raw: Object.assign({}, ref),

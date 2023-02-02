@@ -1,3 +1,4 @@
+import Logger from 'js-logger'
 import {
   Color,
   DynamicDrawUsage,
@@ -101,6 +102,12 @@ export class SectionBoxOutlines {
           // check each triangle edge to see if it intersects with the plane. If so then
           // add it to the list of segments.
           const material = batches[b].getMaterialAtIndex(i)
+          // TO DO ALEX: This shouldn't happen in the first place. Issue caused by
+          // duplicated ids with blocks
+          if (!material) {
+            Logger.warn('No material found for hit')
+            return
+          }
           if (
             material instanceof SpeckleGhostMaterial ||
             material.visible === false ||
