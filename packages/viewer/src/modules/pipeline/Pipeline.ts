@@ -73,7 +73,7 @@ export class Pipeline {
 
   private depthPass: DepthPass = null
   private normalsPass: NormalsPass = null
-  private stencilPass: StencilPass = null
+  public stencilPass: StencilPass = null
   private renderPass: ColorPass = null
   private stencilMaskPass: StencilMaskPass = null
   private dynamicAoPass: DynamicSAOPass = null

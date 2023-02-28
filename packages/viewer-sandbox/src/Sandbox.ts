@@ -786,6 +786,25 @@ export default class Sandbox {
           Sandbox.shadowCatcherParams
         this.viewer.getRenderer().updateShadowCatcher()
       })
+    const obj = { outlines: true, selection: true }
+    shadowcatcherFolder
+      .addInput(obj, 'outlines', {
+        label: 'Enable Section Outlines'
+      })
+      .on('change', (value) => {
+        value
+        this.viewer.getRenderer().enableSectionBoxCapper(value.value)
+        this.viewer.requestRender()
+      })
+    shadowcatcherFolder
+      .addInput(obj, 'selection', {
+        label: 'Enable Selection Outlines'
+      })
+      .on('change', (value) => {
+        value
+        this.viewer.getRenderer().enableSelectionOutline(value.value)
+        this.viewer.requestRender()
+      })
   }
 
   makeFilteringUI() {

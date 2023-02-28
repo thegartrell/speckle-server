@@ -632,6 +632,13 @@ export default class SpeckleRenderer {
     this.sectionBoxOutlines.enable(value)
   }
 
+  public enableSelectionOutline(value: boolean) {
+    this.pipeline.stencilPass.overrideMaterial.userData.displacement.value = value
+      ? 2
+      : 0
+    this.pipeline.stencilPass.overrideMaterial.needsUpdate = true
+  }
+
   public updateShadowCatcher() {
     this._shadowcatcher.shadowcatcherMesh.visible = this.sunConfiguration.shadowcatcher
     if (this.sunConfiguration.shadowcatcher) {

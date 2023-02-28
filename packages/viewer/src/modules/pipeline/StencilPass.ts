@@ -16,7 +16,7 @@ import { BaseSpecklePass, SpecklePass } from './SpecklePass'
 export class StencilPass extends BaseSpecklePass implements SpecklePass {
   private camera: Camera
   private scene: Scene
-  private overrideMaterial: Material = null
+  public overrideMaterial: Material = null
   private _oldClearColor: Color = new Color()
   private clearColor: Color = null
   private clearAlpha = 0
