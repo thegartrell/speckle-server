@@ -1,23 +1,25 @@
 import {
   Texture,
-  PMREMGenerator,
   WebGLRenderer,
   TextureLoader,
   Color,
-  DataTexture
+  DataTexture,
+  Matrix4
 } from 'three'
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { Asset, AssetType } from '../IViewer'
 import Logger from 'js-logger'
+import { FixedPMREMGenerator } from './objects/FixedPMREMGenerator'
 
 export class Assets {
   private static _cache: { [name: string]: Texture } = {}
-  private static pmremGenerator: PMREMGenerator
+  private static pmremGenerator: FixedPMREMGenerator
 
   public constructor(renderer: WebGLRenderer) {
-    Assets.pmremGenerator = new PMREMGenerator(renderer)
-    Assets.pmremGenerator.compileEquirectangularShader()
+    Assets.pmremGenerator = new FixedPMREMGenerator(renderer)
+    const mat = new Matrix4().makeRotationX(-Math.PI * 0.5)
+    Assets.pmremGenerator.compileProperEquirectShader(mat)
   }
 
   private static getLoader(src: string, assetType: AssetType): TextureLoader {
@@ -71,7 +73,7 @@ export class Assets {
     })
   }
 
-  /** Will unify with environment fetching soon */
+  /** Will unify with environment fetching soonᵗᵐ */
   public static getTexture(asset: Asset | string): Promise<Texture> {
     let srcUrl: string = null
     let assetType: AssetType = undefined

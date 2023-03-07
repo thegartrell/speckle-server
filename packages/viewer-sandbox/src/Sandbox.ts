@@ -588,12 +588,25 @@ export default class Sandbox {
 
     const lightsFolder = this.tabs.pages[1].addFolder({
       title: 'Lights',
-      expanded: false
+      expanded: true
     })
     const directLightFolder = lightsFolder.addFolder({
       title: 'Direct',
       expanded: true
     })
+    directLightFolder
+      .addInput({ timeOfDay: 'NONE' }, 'timeOfDay', {
+        options: {
+          NONE: 'NONE',
+          DAWN: 'DAWN',
+          NOON: 'NOON',
+          DUSK: 'DUSK'
+        }
+      })
+      .on('change', (value) => {
+        Object.assign(Sandbox.lightParams, this.viewer.setTimeOfDay(value.value))
+        this.pane.refresh()
+      })
     directLightFolder
       .addInput(Sandbox.lightParams, 'enabled', {
         label: 'Sun Enabled'
