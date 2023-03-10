@@ -594,8 +594,9 @@ export default class Sandbox {
       title: 'Direct',
       expanded: true
     })
+    const plm = { timeOfDay: 'NONE', background: true }
     directLightFolder
-      .addInput({ timeOfDay: 'NONE' }, 'timeOfDay', {
+      .addInput(plm, 'timeOfDay', {
         options: {
           NONE: 'NONE',
           DAWN: 'DAWN',
@@ -603,10 +604,14 @@ export default class Sandbox {
           DUSK: 'DUSK'
         }
       })
-      .on('change', (value) => {
-        Object.assign(Sandbox.lightParams, this.viewer.setTimeOfDay(value.value))
+      .on('change', async (value) => {
+        Object.assign(Sandbox.lightParams, await this.viewer.setTimeOfDay(value.value))
+        this.viewer.setBackground(plm.background)
         this.pane.refresh()
       })
+    directLightFolder.addInput(plm, 'background').on('change', (value) => {
+      this.viewer.setBackground(value.value)
+    })
     directLightFolder
       .addInput(Sandbox.lightParams, 'enabled', {
         label: 'Sun Enabled'

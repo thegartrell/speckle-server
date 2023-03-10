@@ -2,10 +2,11 @@ import { Assets } from './Assets'
 import { WorldTree } from './tree/WorldTree'
 import { Viewer } from './Viewer'
 
+import sampleHdri from '../assets/sample-hdri.png'
 import nishita from '../assets/nishita.png'
 import nishita2 from '../assets/nishita2.png'
 import nishita3 from '../assets/nishita3.png'
-import { AssetType, SunLightConfiguration } from '../IViewer'
+import { AssetType, DefaultLightConfiguration, SunLightConfiguration } from '../IViewer'
 import { Texture } from 'three'
 import Logger from 'js-logger'
 
@@ -58,12 +59,28 @@ export class DebugViewer extends Viewer {
     return WorldTree.getInstance()
   }
 
-  public setTimeOfDay(timeOfDay: string) {
+  public setBackground(value: boolean) {
+    this.speckleRenderer.scene.background = value
+      ? this.speckleRenderer.scene.environment
+      : null
+    this.requestRender()
+  }
+
+  public async setTimeOfDay(timeOfDay: string) {
     switch (timeOfDay) {
       case 'NONE':
-        break
+        await Assets.getEnvironment({ src: sampleHdri, type: AssetType.TEXTURE_HDR })
+          .then((value: Texture) => {
+            this.speckleRenderer.indirectIBL = value
+            this.setLightConfiguration(DefaultLightConfiguration)
+          })
+          .catch((reason) => {
+            Logger.error(reason)
+            Logger.error('Fallback to null environment!')
+          })
+        return DefaultLightConfiguration
       case 'DAWN':
-        Assets.getEnvironment({ src: nishita, type: AssetType.TEXTURE_HDR })
+        await Assets.getEnvironment({ src: nishita, type: AssetType.TEXTURE_HDR })
           .then((value: Texture) => {
             this.speckleRenderer.indirectIBL = value
             this.setLightConfiguration(DebugViewer.lightParamsDawn)
@@ -74,7 +91,7 @@ export class DebugViewer extends Viewer {
           })
         return DebugViewer.lightParamsDawn
       case 'NOON':
-        Assets.getEnvironment({ src: nishita2, type: AssetType.TEXTURE_HDR })
+        await Assets.getEnvironment({ src: nishita2, type: AssetType.TEXTURE_HDR })
           .then((value: Texture) => {
             this.speckleRenderer.indirectIBL = value
             this.setLightConfiguration(DebugViewer.lightParamsNoon)
@@ -85,7 +102,7 @@ export class DebugViewer extends Viewer {
           })
         return DebugViewer.lightParamsNoon
       case 'DUSK':
-        Assets.getEnvironment({ src: nishita3, type: AssetType.TEXTURE_HDR })
+        await Assets.getEnvironment({ src: nishita3, type: AssetType.TEXTURE_HDR })
           .then((value: Texture) => {
             this.speckleRenderer.indirectIBL = value
             this.setLightConfiguration(DebugViewer.lightParamsDusk)
