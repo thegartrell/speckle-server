@@ -10,7 +10,7 @@ export const speckleStandardVert = /* glsl */ `
     uniform vec3 uShadowViewer_low;
 #endif
 attribute float objIndex;
-uniform mat4 objMatrix[OBJ_COUNT];
+uniform sampler2D objMatrix;
 
 varying vec3 vViewPosition;
 
@@ -100,7 +100,8 @@ void main() {
     #include <displacementmap_vertex>
     //#include <project_vertex> // EDITED CHUNK
     #ifdef USE_RTE
-        vec4 mvPosition = objMatrix[int(objIndex)] * computeRelativePositionSeparate(position_low.xyz, position.xyz, uViewer_low, uViewer_high);
+        vec4 pos = texture2D(objMatrix, vec2(objIndex / float(OBJ_COUNT), 0.));
+        vec4 mvPosition = pos + computeRelativePositionSeparate(position_low.xyz, position.xyz, uViewer_low, uViewer_high);
     #else
         vec4 mvPosition = objMatrix[int(objIndex)] * vec4( transformed, 1.0 );
     #endif

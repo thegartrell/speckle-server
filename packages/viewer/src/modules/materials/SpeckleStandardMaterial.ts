@@ -8,7 +8,8 @@ import {
   ShaderLib,
   Vector3,
   MeshStandardMaterial,
-  Material
+  Material,
+  Vector4
 } from 'three'
 import { Matrix4 } from 'three'
 import { Geometry } from '../converter/Geometry'
@@ -38,7 +39,7 @@ class SpeckleStandardMaterial extends MeshStandardMaterial {
       value: new Vector3()
     }
     this.userData.objMatrix = {
-      value: [new Matrix4()]
+      value: null
     }
     ;(this as any).vertProgram = speckleStandardVert
     ;(this as any).fragProgram = speckleStandardFrag

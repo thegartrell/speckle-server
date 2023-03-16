@@ -2,13 +2,17 @@ import {
   Box3,
   BufferAttribute,
   BufferGeometry,
+  DataTexture,
   DynamicDrawUsage,
   Float32BufferAttribute,
+  FloatType,
   Material,
   Matrix4,
   Object3D,
+  RGBAFormat,
   Uint16BufferAttribute,
   Uint32BufferAttribute,
+  Vector4,
   WebGLRenderer
 } from 'three'
 import { Geometry } from '../converter/Geometry'
@@ -85,6 +89,29 @@ export default class MeshBatch implements Batch {
     const targetMaterials = Array.isArray(this.mesh.material)
       ? this.mesh.material
       : [this.mesh.material]
+    const width = this.batchObjects.length
+    const height = 1
+
+    const size = width * height
+    const data = new Float32Array(4 * size)
+
+    const positions = this.batchObjects.map(
+      (value) =>
+        new Vector4(
+          value.transform.elements[12],
+          value.transform.elements[13],
+          value.transform.elements[14]
+        )
+    )
+    for (let k = 0; k < positions.length; k++) {
+      data[k * 4] = positions[k].x
+      data[k * 4 + 1] = positions[k].y
+      data[k * 4 + 2] = positions[k].z
+      data[k * 4 + 3] = positions[k].w
+    }
+
+    const texture = new DataTexture(data, width, height, RGBAFormat, FloatType)
+    texture.needsUpdate = true
     for (let k = 0; k < targetMaterials.length; k++) {
       if (
         !targetMaterials[k].defines['OBJ_COUNT'] ||
@@ -92,9 +119,7 @@ export default class MeshBatch implements Batch {
       ) {
         targetMaterials[k].defines['OBJ_COUNT'] = this.batchObjects.length
       }
-      targetMaterials[k].userData.objMatrix.value = this.batchObjects.map(
-        (value) => value.transform
-      )
+      targetMaterials[k].userData.objMatrix.value = texture
       targetMaterials[k].needsUpdate = true
     }
   }
