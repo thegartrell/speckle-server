@@ -1,5 +1,6 @@
 export const speckleStandardVert = /* glsl */ `
 #define STANDARD
+#define APPLE_FIX
 #ifdef USE_RTE
     // The high component is stored as the default 'position' attribute buffer
     attribute vec3 position_low;
@@ -26,6 +27,12 @@ export const speckleStandardVert = /* glsl */ `
     #endif
 #endif
 
+#ifdef APPLE_FIX
+    #define ROW0 vec4(1., 0., 0., 0.)
+    #define ROW1 vec4(0., 1., 0., 0.)
+    #define ROW2 vec4(0., 0., 1., 0.)
+#endif
+
 varying vec3 vViewPosition;
 
 #ifdef USE_TRANSMISSION
@@ -48,14 +55,14 @@ varying vec3 vViewPosition;
 #include <clipping_planes_pars_vertex>
 
 #ifdef TRANSFORM_STORAGE
-    void objectTransform(out vec4 quaternion, out vec4 pivotLow, out vec4 pivotHigh, out vec4 translation, out vec4 scale){
+    void objectTransform(out highp vec4 quaternion, out highp vec4 pivotLow, out highp vec4 pivotHigh, out highp vec4 translation, out highp vec4 scale){
         #if TRANSFORM_STORAGE == 0
             #if __VERSION__ == 300
                 ivec2 uv = ivec2(int(objIndex) * TRANSFORM_STRIDE, 0); 
-                vec4 v0 = texelFetch( tTransforms, uv, 0 );
-                vec4 v1 = texelFetch( tTransforms, uv + ivec2(1, 0), 0);
-                vec4 v2 = texelFetch( tTransforms, uv + ivec2(2, 0), 0);
-                vec4 v3 = texelFetch( tTransforms, uv + ivec2(3, 0), 0);
+                highp vec4 v0 = texelFetch( tTransforms, uv, 0 );
+                highp vec4 v1 = texelFetch( tTransforms, uv + ivec2(1, 0), 0);
+                highp vec4 v2 = texelFetch( tTransforms, uv + ivec2(2, 0), 0);
+                highp vec4 v3 = texelFetch( tTransforms, uv + ivec2(3, 0), 0);
                 quaternion = v0;
                 pivotLow = vec4(v1.xyz, 1.);
                 pivotHigh = vec4(v2.xyz, 1.);
@@ -87,9 +94,76 @@ varying vec3 vViewPosition;
         #endif
     }
 
-    vec3 rotate_vertex_position(vec3 position, vec4 quat)
+    vec3 rotate_vertex_position(highp vec3 position, highp vec4 quat)
     { 
         return position + 2.0 * cross(quat.xyz, cross(quat.xyz, position) + quat.w * position);
+    }
+
+    vec4 transformRelativePosition(in highp vec4 relativePosition, in highp vec4 relativePivot, in highp vec4 tQuaternion, in highp vec4 tTranslation, in highp vec4 tScale) {
+        highp vec4 tOut = vec4(0., 0., 0., 1.);
+        #ifdef APPLE_FIX
+            // highp mat4 tMat0;
+            // tMat0[0] = vec4(1., 0., 0., 0.);
+            // tMat0[1] = vec4(0., 1., 0., 0.);
+            // tMat0[2] = vec4(0., 0., 1., 0.);
+            // tMat0[3] = vec4(-relativePivot.xyz, 1.);
+
+            // highp vec4 q = tQuaternion;
+            // highp mat4 tMat1;
+            // tMat1[0] = vec4(1.0 - 2.0*q.y*q.y - 2.0*q.z*q.z, 2.0*q.x*q.y + 2.0*q.z*q.w, 2.0*q.x*q.z - 2.0*q.y*q.w, 0.);    
+            // tMat1[1] = vec4(2.0*q.x*q.y - 2.0*q.z*q.w, 1.0 - 2.0*q.x*q.x - 2.0*q.z*q.z, 2.0*q.y*q.z + 2.0*q.x*q.w, 0.);
+            // tMat1[2] = vec4(2.0*q.x*q.z + 2.0*q.y*q.w, 2.0*q.y*q.z - 2.0*q.x*q.w, 1.0 - 2.0*q.x*q.x - 2.0*q.y*q.y, 0.);
+            // tMat1[3] = vec4(0., 0., 0., 1.);
+
+            // highp mat4 tMat2;
+            // tMat2[0] = vec4(tScale.x, 0., 0., 0.);
+            // tMat2[1] = vec4(0., tScale.y, 0., 0.);
+            // tMat2[2] = vec4(0., 0., tScale.z, 0.);
+            // tMat2[3] = vec4(0., 0., 0., 1.);
+
+            // highp mat4 tMat3;
+            // tMat3[0] = vec4(1., 0., 0., 0.);
+            // tMat3[1] = vec4(0., 1., 0., 0.);
+            // tMat3[2] = vec4(0., 0., 1., 0.);
+            // tMat3[3] = vec4(relativePivot.xyz, 1.);
+
+            // highp mat4 tMat4;
+            // tMat4[0] = vec4(1., 0., 0., 0.);
+            // tMat4[1] = vec4(0., 1., 0., 0.);
+            // tMat4[2] = vec4(0., 0., 1., 0.);
+            // tMat4[3] = vec4(tTranslation.xyz, 1.);
+
+            // highp mat4 tBack;
+            // tBack[0] = vec4(1., 0., 0., 0.);
+            // tBack[1] = vec4(0., 1., 0., 0.);
+            // tBack[2] = vec4(0., 0., 1., 0.);
+            // tBack[3] = vec4(-relativePosition.xyz, 1.);
+
+            // tOut = tMat0 * relativePosition;
+            // tOut = tMat1 * tOut;
+            // tOut = tMat2 * tOut;
+            // tOut = tMat3 * tOut;
+            // tOut = tMat4 * tOut;
+            // tOut = tBack * tOut;
+            // tOut = tOut + relativePosition;
+
+            tOut.xyz = relativePosition.xyz - relativePivot.xyz;
+            tOut.xyz = rotate_vertex_position(tOut.xyz, tQuaternion);
+            tOut.xyz = tOut.xyz * tScale.xyz;
+            tOut.xyz = tOut.xyz + relativePivot.xyz;
+            highp mat4 tMat;
+            tMat[0] = ROW0;
+            tMat[1] = ROW1;
+            tMat[2] = ROW2;
+            tMat[3] = vec4(tTranslation.xyz, 1.);
+            tOut = tMat * tOut;
+            tMat[3] = vec4(-relativePosition.xyz, 1.);
+            tOut = tMat * tOut;
+            tOut.xyz = tOut.xyz + relativePosition.xyz;
+        #else
+            tOut.xyz = rotate_vertex_position((relativePosition - relativePivot).xyz, tQuaternion) * tScale.xyz + relativePivot.xyz + tTranslation.xyz;
+        #endif
+        return tOut;
     }
 #endif
 
@@ -165,21 +239,21 @@ void main() {
     //#include <project_vertex> // EDITED CHUNK
     
     #ifdef TRANSFORM_STORAGE
-        vec4 tQuaternion, tPivotLow, tPivotHigh, tTranslation, tScale;
+        highp vec4 tQuaternion, tPivotLow, tPivotHigh, tTranslation, tScale;
         objectTransform(tQuaternion, tPivotLow, tPivotHigh, tTranslation, tScale);
     #endif
     #ifdef USE_RTE
-        vec4 position_lowT = vec4(position_low, 1.);
-        vec4 position_highT = vec4(position, 1.);
-        vec4 rteLocalPosition = computeRelativePositionSeparate(position_lowT.xyz, position_highT.xyz, uViewer_low, uViewer_high);
+        highp vec4 position_lowT = vec4(position_low, 1.);
+        highp vec4 position_highT = vec4(position, 1.);
+        highp vec4 rteLocalPosition = computeRelativePositionSeparate(position_lowT.xyz, position_highT.xyz, uViewer_low, uViewer_high);
         #ifdef TRANSFORM_STORAGE
-            vec4 rtePivot = computeRelativePositionSeparate(tPivotLow.xyz, tPivotHigh.xyz, uViewer_low, uViewer_high);
-            rteLocalPosition.xyz = rotate_vertex_position((rteLocalPosition - rtePivot).xyz, tQuaternion) * tScale.xyz + rtePivot.xyz + tTranslation.xyz;
+            highp vec4 rtePivot = computeRelativePositionSeparate(tPivotLow.xyz, tPivotHigh.xyz, uViewer_low, uViewer_high);
+            rteLocalPosition.xyz = transformRelativePosition(rteLocalPosition, rtePivot, tQuaternion, tTranslation, tScale).xyz;       
         #endif
     #endif
 
     #ifdef USE_RTE
-        vec4 mvPosition = rteLocalPosition;
+        highp vec4 mvPosition = rteLocalPosition;
     #else
         vec4 mvPosition = vec4( transformed, 1.0 );
     #endif
@@ -218,7 +292,8 @@ void main() {
         #endif
         #ifdef TRANSFORM_STORAGE
             vec4 rtePivotShadow = computeRelativePositionSeparate(tPivotLow.xyz, tPivotHigh.xyz, uShadowViewer_low, uShadowViewer_high);
-            shadowPosition.xyz = rotate_vertex_position((shadowPosition - rtePivotShadow).xyz, tQuaternion) * tScale.xyz + rtePivotShadow.xyz + tTranslation.xyz;
+            // shadowPosition.xyz = rotate_vertex_position((shadowPosition - rtePivotShadow).xyz, tQuaternion) * tScale.xyz + rtePivotShadow.xyz + tTranslation.xyz;
+            shadowPosition.xyz = transformRelativePosition(shadowPosition, rtePivotShadow, tQuaternion, tTranslation, tScale).xyz;
         #endif
         shadowWorldPosition = modelMatrix * shadowPosition + vec4( shadowWorldNormal * directionalLightShadows[ i ].shadowNormalBias, 0 );
         vDirectionalShadowCoord[ i ] = shadowMatrix * shadowWorldPosition;
