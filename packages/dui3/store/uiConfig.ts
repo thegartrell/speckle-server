@@ -4,7 +4,7 @@ import { Config } from 'lib/bindings/definitions/IConfigBinding'
 export const useDocumentInfoStore = defineStore('documentInfoStore', () => {
   const { $configBinding } = useNuxtApp()
 
-  const hasConfigBindings = ref(!!$configBinding)
+  const hasUiConfigBinding = ref(!!$configBinding)
   const uiConfig = ref<Config>({ darkTheme: false })
 
   watch(
@@ -30,5 +30,5 @@ export const useDocumentInfoStore = defineStore('documentInfoStore', () => {
   }
   void init()
 
-  return { hasConfigBindings, isDarkTheme, toggleTheme }
+  return { hasUiConfigBinding, isDarkTheme, toggleTheme }
 })

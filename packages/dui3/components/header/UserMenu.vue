@@ -66,7 +66,7 @@
                 have loaded. E.g., if config bindings are not present, we do not show any button
                 regarding switching themes. 
               -->
-              <div v-if="hasConfigBindings">
+              <div v-if="hasUiConfigBinding">
                 <FormButton size="xs" text @click.stop="toggleTheme()">
                   {{ isDarkTheme ? 'Switch To Light Theme' : 'Switch To Dark Theme' }}
                 </FormButton>
@@ -90,7 +90,7 @@ const accountStore = useAccountStore()
 const { accounts, defaultAccount, loading } = storeToRefs(accountStore)
 
 const uiConfigStore = useDocumentInfoStore()
-const { isDarkTheme, hasConfigBindings } = storeToRefs(uiConfigStore)
+const { isDarkTheme, hasUiConfigBinding } = storeToRefs(uiConfigStore)
 const { toggleTheme } = uiConfigStore
 
 const { $showDevTools } = useNuxtApp()

@@ -10,7 +10,8 @@
             <PortalTarget name="navigation"></PortalTarget>
           </div>
         </div>
-        <div>
+        <div class="flex items-center h-14 transition-all justify-between">
+          <HeaderSettings />
           <HeaderUserMenu />
         </div>
       </div>
