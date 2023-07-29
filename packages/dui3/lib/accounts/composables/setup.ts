@@ -1,25 +1,8 @@
 import { ApolloClient, gql } from '@apollo/client/core'
 import { ApolloClients } from '@vue/apollo-composable'
-import { ComputedRef, Ref } from 'vue'
-import { Account } from '~/lib/bindings/definitions/IBasicConnectorBinding'
+import { DUIAccount } from 'lib/accounts/DUIAccount'
+import { DUIAccountsState } from 'lib/accounts/DUIAccountsState'
 import { resolveClientConfig } from '~/lib/core/configs/apollo'
-
-export type DUIAccount = {
-  /** account info coming from the host app */
-  accountInfo: Account
-  /** the graphql client; a bit superflous */
-  client?: ApolloClient<unknown>
-  /** whether an intial serverinfo query succeeded. */
-  isValid: boolean
-}
-
-export type DUIAccountsState = {
-  accounts: Ref<DUIAccount[]>
-  validAccounts: ComputedRef<DUIAccount[]>
-  refreshAccounts: () => Promise<void>
-  defaultAccount: ComputedRef<DUIAccount | undefined>
-  loading: Ref<boolean>
-}
 
 const AccountsInjectionKey = 'DUI_ACCOUNTS_STATE'
 

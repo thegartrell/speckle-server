@@ -1,10 +1,24 @@
 <template>
-  <div class="flex items-center justify-center h-[calc(100vh-14rem)]">
-    <div
-      class="p-2 bg-primary text-foreground-on-primary shadow-md rounded-md font-bold"
-    >
-      TODO: Everything
-    </div>
+  <div class="flex md:flex md:flex-grow flex-row justify-end space-x-1 p-2 pb-4">
+    <FormButton size="sm" @click="addSendCardHandler">
+      <ArrowUpIcon class="w-5 h-5" />
+      Send
+    </FormButton>
+  </div>
+  <div v-for="sendCard in sendCards" :key="sendCard.projectId">
+    <ModelSendCard :card-send="sendCard" :filter-enabled="false" />
   </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ArrowUpIcon } from '@heroicons/vue/20/solid'
+import { storeToRefs } from 'pinia'
+import { useModelStateStore } from '~/store/modelState'
+
+const modelStateStore = useModelStateStore()
+const { sendCards } = storeToRefs(modelStateStore)
+const { addSendCard } = modelStateStore
+
+function addSendCardHandler() {
+  addSendCard({ projectId: 'test', modelId: 'test' })
+}
+</script>

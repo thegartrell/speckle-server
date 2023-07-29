@@ -2,7 +2,7 @@
   <div>
     <button
       type="button"
-      class="rounded-lg bg-black bg-opacity-5 px-2 py-2 text-sm font-medium outline-none"
+      class="rounded-xl bg-black bg-opacity-5 px-2 py-2 text-sm font-medium outline-none"
       @click="openModal"
     >
       <Cog6ToothIcon class="h-6 w-6 text-gray-500" />
