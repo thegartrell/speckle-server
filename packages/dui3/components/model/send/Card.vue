@@ -1,9 +1,9 @@
 <template>
   <div
-    class="relative group flex flex-col md:flex-row md:space-x-2 border-2 border-primary-muted hover:bg-primary-muted rounded-md p-3 transition overflow-hidden"
+    class="relative group flex flex-col md:flex-row md:space-x-2 border-2 border-primary-muted hover:bg-primary-muted rounded-md p-3 transition overflow-hidden mb-1"
   >
     <div
-      class="w-full md:w-48 flex flex-col col-span-3 lg:col-span-1 mb-4 md:mb-0 flex-shrink-0 space-y-1"
+      class="w-full md:w-48 flex flex-col col-span-3 lg:col-span-1 flex-shrink-0 space-y-1"
     >
       <div class="grid grid-cols-6 gap-2">
         <div class="min-h-[25px] flex items-center col-span-3">
@@ -35,7 +35,7 @@
           </FormButton>
         </div>
       </div>
-      <div v-if="filterEnabledRef" class="h-50">
+      <div v-if="filterEnabledRef">
         <ModelSendCardFilters :card-send="cardSend" />
       </div>
     </div>

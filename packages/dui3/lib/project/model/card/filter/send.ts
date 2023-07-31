@@ -20,6 +20,8 @@ export type ProjectModelCardSendFilterTagKeys = keyof ProjectModelCardSendFilter
   string
 
 export type ProjectModelCardSendFilterTagData = {
+  id: string
   name: string
   color: string
+  active: boolean
 }

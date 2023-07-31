@@ -1,9 +1,13 @@
 import { ProjectModelCardSend } from 'lib/project/model/card/send'
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
+import { useSendFilterStore } from './sendFilter'
 
 export const useModelStateStore = defineStore('modelStateStore', () => {
   const { $baseBinding } = useNuxtApp()
   const sendCards = ref<ProjectModelCardSend[]>([]) // Use ref here to make sendCards reactive
+
+  const sendFilterStore = useSendFilterStore()
+  const { defaultSendFilter } = storeToRefs(sendFilterStore)
 
   // Get existing model state from connector.
   const init = async () => {
@@ -14,6 +18,9 @@ export const useModelStateStore = defineStore('modelStateStore', () => {
   void init()
 
   const addSendCard = (sendCard: ProjectModelCardSend) => {
+    if (!sendCard.filters && defaultSendFilter.value) {
+      sendCard = { ...sendCard, filters: defaultSendFilter.value }
+    }
     sendCards.value.push(sendCard)
   }
 

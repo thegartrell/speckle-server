@@ -1,13 +1,17 @@
-import { ProjectModelCardSendFilterData } from 'lib/project/model/card/filter/send'
+import {
+  ProjectModelCardSendFilter,
+  ProjectModelCardSendFilterData
+} from 'lib/project/model/card/filter/send'
 import { defineStore } from 'pinia'
 
-export const useSendFilter = defineStore('sendFilterStore', () => {
+export const useSendFilterStore = defineStore('sendFilterStore', () => {
   const { $baseBinding } = useNuxtApp()
 
-  let defaultSendFilter
+  const defaultSendFilter = ref<ProjectModelCardSendFilter>()
+
   const init = async () => {
     if (!$baseBinding) return
-    defaultSendFilter = await $baseBinding.getSendFilter()
+    defaultSendFilter.value = await $baseBinding.getSendFilter()
   }
   void init()
 
