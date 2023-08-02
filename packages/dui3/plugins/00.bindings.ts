@@ -25,6 +25,7 @@ import {
   IConnectorConfigBinding,
   IConnectorConfigBindingKey
 } from '~/lib/bindings/definitions/IConnectorConfigBinding'
+import { ISendBinding, ISendBindingKey } from '~/lib/bindings/definitions/ISendBinding'
 
 // Makes TS happy
 declare let globalThis: Record<string, unknown> & {
@@ -54,6 +55,9 @@ export default defineNuxtPlugin(async () => {
   // UI configuration bindings.
   const configBinding = await tryHoistBinding<IConfigBinding>(IConfigBindingKey)
 
+  // UI send bindings.
+  const sendBinding = await tryHoistBinding<ISendBinding>(ISendBindingKey)
+
   // UI connector configuration bindings.
   const connectorConfigBinding = await tryHoistBinding<IConnectorConfigBinding>(
     IConnectorConfigBindingKey
@@ -74,6 +78,7 @@ export default defineNuxtPlugin(async () => {
       baseBinding,
       configBinding,
       connectorConfigBinding,
+      sendBinding,
       showDevTools,
       openUrl
     }

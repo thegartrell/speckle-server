@@ -18,7 +18,9 @@ const modelStateStore = useModelStateStore()
 const { sendCards } = storeToRefs(modelStateStore)
 const { addSendCard } = modelStateStore
 
+const modelId = () => new Date().getTime().toString()
+
 function addSendCardHandler() {
-  addSendCard({ projectId: 'test', modelId: 'test' })
+  addSendCard({ accountId: 'account', projectId: 'test', modelId: modelId() })
 }
 </script>

@@ -1,4 +1,4 @@
-import { DocumentInfo } from 'lib/document/DocumentInfo'
+import { DocumentInfo } from 'lib/data/document/DocumentInfo'
 import { defineStore } from 'pinia'
 
 export const useDocumentInfoStore = defineStore('documentInfoStore', () => {

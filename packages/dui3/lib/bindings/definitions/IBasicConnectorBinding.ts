@@ -3,12 +3,13 @@
 import { BaseBridge } from '~~/lib/bridge/base'
 import { IBinding } from '~~/lib/bindings/definitions/IBinding'
 import { Account } from 'lib/accounts/Account'
-import { DocumentInfo } from 'lib/document/DocumentInfo'
+import { DocumentInfo } from 'lib/data/document/DocumentInfo'
 import {
   ProjectModelCardSendFilter,
   ProjectModelCardSendFilterData
 } from 'lib/project/model/card/filter/send'
 import { ModelState } from 'lib/project/model/state'
+import { ListSelection, ListSelectionItems } from 'lib/data/selection/ListSelection'
 
 export const IBasicConnectorBindingKey = 'baseBinding'
 
@@ -19,12 +20,13 @@ export interface IBasicConnectorBinding
   getSourceApplicationName: () => Promise<string>
   getSourceApplicationVersion: () => Promise<string>
   getDocumentInfo: () => Promise<DocumentInfo>
-  getSendFilter: () => Promise<ProjectModelCardSendFilter>
+  getSendFilter: () => Promise<ListSelection>
   updateSendFilter: (
+    accountId: string,
     projectId: string,
     modelId: string,
     filterId: string,
-    newValue: ProjectModelCardSendFilterData
+    newValue: ListSelection
   ) => Promise<void>
   getModelState: () => Promise<ModelState>
 }

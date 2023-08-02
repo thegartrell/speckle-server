@@ -8,12 +8,12 @@ export type ProjectModelCardSendFilterData = {
   name: string
   input: 'toogle'
   duplicable: boolean
-  tags?: ProjectModelCardSendFilterTag
-  activeTags?: ProjectModelCardSendFilterTagKeys
+  options?: ProjectModelCardSendFilterTag
+  activeOptions?: ProjectModelCardSendFilterTagKeys
 }
 
 export type ProjectModelCardSendFilterTag = {
-  [tagId: string]: ProjectModelCardSendFilterTagData
+  [optionId: string]: ProjectModelCardSendFilterTagData
 }
 
 export type ProjectModelCardSendFilterTagKeys = keyof ProjectModelCardSendFilterTag &
@@ -23,5 +23,15 @@ export type ProjectModelCardSendFilterTagData = {
   id: string
   name: string
   color: string
-  active: boolean
 }
+
+export type FilterIdentity = {
+  accountId: string
+  projectId: string
+  modelId: string
+  filterId: string
+}
+
+export type FilterTagIdentity = {
+  tagId: string
+} & FilterIdentity
