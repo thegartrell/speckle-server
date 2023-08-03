@@ -30,6 +30,7 @@
             color="card"
             size="sm"
             class="w-20 rounded-xl bg-black bg-opacity-5 px-2 text-sm font-medium outline-none"
+            @click="sendToSpeckle()"
           >
             <ArrowUpIcon class="w-5 h-5" />
           </FormButton>
@@ -54,5 +55,9 @@ const filterEnabledRef = ref(props.filterEnabled)
 
 function updateFilterEnabled() {
   filterEnabledRef.value = !filterEnabledRef.value
+}
+
+function sendToSpeckle() {
+  console.log('get here objects from ruby!')
 }
 </script>

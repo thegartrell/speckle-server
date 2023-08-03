@@ -14,17 +14,19 @@
       </button>
       <div v-if="tagsEnabled">
         <div
-          v-for="item in filterData.items"
+          v-for="item in (filterData as ListSelection).items"
           :key="item.name"
           class="inline-block py-1 mx-1"
         >
           <FormButton
-            :color="filterData.selectedItems?.includes(item.id) ? 'success' : 'card'"
+            :color="(filterData as ListSelection).selectedItems?.includes(item.id) ? 'success' : 'card'"
             size="sm"
             class="rounded-xl bg-black bg-opacity-5 text-sm font-medium outline-none"
             @click="updateSendFilterTagHandler(item.id)"
           >
-            <div :class="`h-3 w-3 m-1 ml-0 border bg-[${item.color}]`"></div>
+            <div
+              :class="`h-3 w-3 m-1 ml-0 border bg-[${(item as ListSelectionItem).color}]`"
+            ></div>
             {{ item.name }}
           </FormButton>
         </div>
