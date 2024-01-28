@@ -1,6 +1,5 @@
 <template>
   <div>
-    <ProjectPageHeader :project="project" class="mb-8" />
     <h1 class="block h4 font-bold mb-4">Versions</h1>
     <div
       v-if="selectedItems.length"
@@ -86,7 +85,6 @@
       :visibility="project.visibility"
       :project-id="project.id"
       :model-id="project.model.id"
-      :version-id="currentVersionId"
     />
     <div class="py-12">
       <!-- Some padding to deal with a card menu potentially opening at the bottom of the page -->

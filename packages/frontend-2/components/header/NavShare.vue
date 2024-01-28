@@ -58,14 +58,13 @@
         </MenuItem>
       </MenuItems>
     </Transition>
+    <ProjectModelPageDialogEmbed
+      v-model:open="embedDialogOpen"
+      :project-id="projectId"
+      :model-id="modelId"
+      :visibility="visibility"
+    />
   </Menu>
-  <ProjectModelPageDialogEmbed
-    v-model:open="embedDialogOpen"
-    :project-id="props.projectId"
-    :model-id="props.modelId"
-    :version-id="props.versionId"
-    :visibility="props.visibility"
-  />
 </template>
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/vue'
@@ -75,14 +74,14 @@ import {
   FingerPrintIcon,
   CodeBracketIcon
 } from '@heroicons/vue/24/outline'
+import { SpeckleViewer } from '@speckle/shared'
 import { keyboardClick } from '@speckle/ui-components'
 import type { ProjectVisibility } from '~/lib/common/generated/gql/graphql'
 import { useCopyModelLink } from '~~/lib/projects/composables/modelManagement'
 
 const props = defineProps<{
   projectId: string
-  modelId: string
-  versionId?: string
+  resourceIdString: string
   visibility: ProjectVisibility
 }>()
 
@@ -91,14 +90,27 @@ const copyModelLink = useCopyModelLink()
 
 const embedDialogOpen = ref(false)
 
-const isFederated = computed(() => props.modelId.includes(','))
+const parsedResourceIds = computed(() =>
+  SpeckleViewer.ViewerRoute.parseUrlParameters(props.resourceIdString)
+)
 
-const handleCopyLink = () => {
-  copyModelLink(props.projectId, props.modelId, props.versionId)
-}
+const firstResource = computed(() => parsedResourceIds.value[0] || {})
+
+const modelId = computed(() => {
+  if (SpeckleViewer.ViewerRoute.isModelResource(firstResource.value)) {
+    return firstResource.value.modelId
+  }
+  return ''
+})
+
+const isFederated = computed(() => parsedResourceIds.value.length > 1)
 
 const handleCopyId = () => {
-  copy(props.modelId, { successMessage: 'Model ID copied to clipboard' })
+  copy(modelId.value, { successMessage: 'Model ID copied to clipboard' })
+}
+
+const handleCopyLink = () => {
+  copyModelLink(props.projectId, props.resourceIdString)
 }
 
 const handleEmbed = () => {
