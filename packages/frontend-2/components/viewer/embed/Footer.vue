@@ -1,14 +1,17 @@
 <template>
   <ClientOnly>
     <div
-      v-if="embedOptions.isEnabled"
+      v-if="isEmbedEnabled"
       class="select-none fixed bottom-0 left-0 w-full z-20 flex gap-3 px-4 h-14 items-center"
-      :class="embedOptions.isTransparent ? 'bg-transparent' : 'bg-foundation shadow-t'"
+      :class="isTransparent ? 'bg-transparent' : 'bg-foundation'"
     >
-      <NuxtLink href="https://speckle.systems/" target="_blank">
-        <HeaderLogoBlock large-icon to="https://speckle.systems/" show-text-on-mobile />
-      </NuxtLink>
-      <div class="h-6 w-px bg-primary"></div>
+      <HeaderLogoBlock
+        large-icon
+        to="https://speckle.systems/"
+        target="_blank"
+        show-text-on-mobile
+      />
+      <div class="h-6 w-px bg-outline-3"></div>
       <div class="flex flex-col">
         <NuxtLink :to="url" target="_blank" class="leading-3">
           <div class="flex items-center gap-1 w-full">
@@ -28,8 +31,7 @@
 
 <script setup lang="ts">
 import { ArrowTopRightOnSquareIcon } from '@heroicons/vue/20/solid'
-
-import { useEmbedState } from '~~/lib/viewer/composables/setup/embed'
+import { useEmbed } from '~/lib/viewer/composables/setup/embed'
 
 defineProps<{
   date?: string
@@ -37,5 +39,5 @@ defineProps<{
   url?: string
 }>()
 
-const { embedOptions } = useEmbedState()
+const { isEmbedEnabled, isTransparent } = useEmbed()
 </script>
