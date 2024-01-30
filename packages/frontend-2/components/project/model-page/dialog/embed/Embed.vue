@@ -54,7 +54,7 @@
               <Cog6ToothIcon class="h-full w-full" />
             </template>
             <div
-              class="flex flex-col gap-1.5 sm:gap-2 ml-7 text-xs sm:text-sm cursor-default"
+              class="flex flex-col gap-1.5 sm:gap-2 ml-5 sm:ml-7 text-sm cursor-default"
             >
               <div v-for="option in embedDialogOptions" :key="option.id">
                 <label
@@ -132,7 +132,6 @@ const hideViewerControls = ref(false)
 const hideSelectionInfo = ref(false)
 const preventScrolling = ref(false)
 const manuallyLoadModel = ref(false)
-const commentSlideshowMode = ref(false)
 
 const parsedResources = computed(() =>
   SpeckleViewer.ViewerRoute.parseUrlParameters(props.modelId)
@@ -264,11 +263,6 @@ const embedDialogOptions = [
     id: 'manualLoad',
     label: 'Load model manually',
     value: manuallyLoadModel
-  },
-  {
-    id: 'commentSlideshow',
-    label: 'Comment slideshow mode',
-    value: commentSlideshowMode
   }
 ]
 </script>

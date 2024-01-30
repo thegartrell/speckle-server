@@ -1,10 +1,15 @@
 <template>
   <Menu
     as="div"
-    class="hidden sm:flex items-center relative border-r border-outline-1 pr-4"
+    class="flex items-center relative sm:border-r border-outline-1 sm:pr-4"
   >
     <MenuButton as="div">
-      <FormButton outlined :icon-right="ChevronDownIcon">Share</FormButton>
+      <FormButton class="hidden sm:flex" outlined :icon-right="ChevronDownIcon">
+        Share
+      </FormButton>
+      <button class="sm:hidden mt-1.5">
+        <ShareIcon class="h-5 w-5 text-primary" />
+      </button>
     </MenuButton>
     <Transition
       enter-active-class="transition ease-out duration-200"
@@ -15,7 +20,7 @@
       leave-to-class="transform opacity-0 scale-95"
     >
       <MenuItems
-        class="absolute z-50 flex flex-col gap-1 right-4 top-12 w-full sm:w-44 p-1 origin-top-right bg-foundation-2 outline outline-2 outline-primary-muted rounded-md shadow-lg overflow-hidden text-sm"
+        class="absolute z-50 flex flex-col gap-1 right-0 sm:right-4 top-12 min-w-max w-full sm:w-44 p-1 origin-top-right bg-foundation-2 outline outline-2 outline-primary-muted rounded-md shadow-lg overflow-hidden text-sm"
       >
         <MenuItem v-slot="{ active }">
           <div
@@ -72,7 +77,8 @@ import {
   ChevronDownIcon,
   LinkIcon,
   FingerPrintIcon,
-  CodeBracketIcon
+  CodeBracketIcon,
+  ShareIcon
 } from '@heroicons/vue/24/outline'
 import { SpeckleViewer } from '@speckle/shared'
 import { keyboardClick } from '@speckle/ui-components'
