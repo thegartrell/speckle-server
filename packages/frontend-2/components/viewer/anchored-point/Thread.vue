@@ -144,12 +144,7 @@
               </div>
             </div>
             <ViewerAnchoredPointThreadNewReply
-              v-if="
-                !modelValue.archived &&
-                canReply &&
-                !isSmallerOrEqualSm &&
-                !isEmbedEnabled
-              "
+              v-if="showNewReplyComponent"
               :model-value="modelValue"
               @submit="onNewReply"
             />
@@ -166,6 +161,12 @@
               >
                 Reply in Speckle
               </FormButton>
+            </div>
+            <div
+              v-if="!canReply && !isEmbedEnabled"
+              class="p-3 flex flex-col items-center justify-center bg-foundation-2"
+            >
+              <FormButton full-width @click="$emit('login')">Reply</FormButton>
             </div>
           </div>
         </div>
@@ -218,6 +219,7 @@ const emit = defineEmits<{
   (e: 'update:expanded', v: boolean): void
   (e: 'next', v: CommentBubbleModel): void
   (e: 'prev', v: CommentBubbleModel): void
+  (e: 'login'): void
 }>()
 
 const props = defineProps<{
@@ -260,6 +262,15 @@ const comments = computed(() => [
   props.modelValue,
   ...props.modelValue.replies.items.slice().reverse()
 ])
+
+const showNewReplyComponent = computed(() => {
+  return (
+    !props.modelValue.archived &&
+    canReply.value &&
+    !isSmallerOrEqualSm.value &&
+    !isEmbedEnabled.value
+  )
+})
 
 // Note: conflicted with dragging styles, so took it out temporarily
 // const { style } = useExpandedThreadResponsiveLocation({

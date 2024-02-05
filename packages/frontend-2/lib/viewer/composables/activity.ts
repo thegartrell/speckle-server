@@ -57,7 +57,6 @@ function useCollectMainMetadata() {
   const { sessionId } = useInjectedViewerState()
   const { activeUser } = useActiveUser()
   const { serialize } = useStateSerialization()
-
   return (): Omit<ViewerUserActivityMessageInput, 'status' | 'selection'> => ({
     userId: activeUser.value?.id || null,
     userName: activeUser.value?.name || 'Anonymous Viewer',
@@ -80,9 +79,10 @@ export function useViewerUserActivityBroadcasting(
   const { isLoggedIn } = useActiveUser()
   const getMainMetadata = useCollectMainMetadata()
   const apollo = useApolloClient().client
+  const { isEnabled: isEmbedEnabled } = useEmbed()
 
   const invokeMutation = async (message: ViewerUserActivityMessageInput) => {
-    if (!isLoggedIn.value) return false
+    if (!isLoggedIn.value || isEmbedEnabled) return false
     const result = await apollo
       .mutate({
         mutation: broadcastViewerUserActivityMutation,

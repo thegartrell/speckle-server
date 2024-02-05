@@ -51,7 +51,8 @@ export default defineNuxtConfig({
       logClientApiToken: '',
       logClientApiEndpoint: '',
       speckleServerVersion: SPECKLE_SERVER_VERSION || 'unknown',
-      serverName: 'UNDEFINED'
+      serverName: 'UNDEFINED',
+      viewerDebug: false
     }
   },
 
@@ -130,11 +131,17 @@ export default defineNuxtConfig({
     // Necessary because of redirects from backend in auth flows
     '/': {
       cors: true,
-      headers: { 'access-control-allow-methods': 'GET' }
+      headers: {
+        'access-control-allow-methods': 'GET',
+        'Access-Control-Expose-Headers': '*'
+      }
     },
     '/authn/login': {
       cors: true,
-      headers: { 'access-control-allow-methods': 'GET' }
+      headers: {
+        'access-control-allow-methods': 'GET',
+        'Access-Control-Expose-Headers': '*'
+      }
     }
   },
 

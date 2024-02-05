@@ -7,8 +7,10 @@
     <ViewerAnchoredPointNewThread
       v-if="canPostComment && !isEmbedEnabled"
       v-model="buttonState"
+      :can-post-comment="canPostComment"
       class="z-[13]"
       @close="closeNewThread"
+      @login="showLoginDialog = true"
     />
 
     <!-- Comment bubbles -->
@@ -22,6 +24,7 @@
       @update:expanded="onThreadExpandedChange"
       @next="(model) => openNextThread(model)"
       @prev="(model) => openPrevThread(model)"
+      @login="showLoginDialog = true"
     />
 
     <div v-if="!isEmbedEnabled">
@@ -33,6 +36,13 @@
         class="z-[10]"
       />
     </div>
+
+    <AuthLoginPanel
+      v-model:open="showLoginDialog"
+      dialog-mode
+      max-width="sm"
+      subtitle="Join the conversation"
+    />
 
     <!-- Active user avatars in navbar -->
     <Portal to="secondary-actions">
@@ -151,6 +161,8 @@ const {
     hideBubbles
   }
 } = useInjectedViewerInterfaceState()
+
+const showLoginDialog = ref(false)
 
 useViewerCommentBubblesProjection({ parentEl })
 

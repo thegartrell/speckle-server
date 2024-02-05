@@ -19,11 +19,17 @@
   </NuxtLink>
 </template>
 <script setup lang="ts">
-defineProps<{
-  minimal?: boolean
-  active?: boolean
-  to?: string
-  showTextOnMobile?: boolean
-  target?: string
-}>()
+withDefaults(
+  defineProps<{
+    minimal?: boolean
+    active?: boolean
+    to?: string
+    showTextOnMobile?: boolean
+    target?: string
+  }>(),
+  {
+    active: true,
+    to: '/'
+  }
+)
 </script>

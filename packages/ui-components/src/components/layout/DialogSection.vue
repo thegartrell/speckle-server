@@ -24,7 +24,7 @@
         class="text-sm sm:text-base font-bold flex items-center gap-1 sm:gap-2 select-none"
         :class="titleClasses"
       >
-        <div class="h-4 sm:h-5 w-4 sm:w-5 empty:h-0 empty:w-0">
+        <div class="h-4 sm:h-5 h-4 sm:w-5 empty:h-0 empty:w-0">
           <slot name="icon"></slot>
         </div>
         <span>{{ title }}</span>
@@ -54,33 +54,36 @@
       class="transition-all duration-700 overflow-hidden"
       :class="[
         allowOverflow && isExpanded ? '!overflow-visible' : '',
-        isExpanded ? 'mb-3 mt-1' : ''
+        isExpanded ? 'mb-3 mt-1' : '',
+        !button && !alwaysOpen ? 'cursor-pointer hover:bg-foundation' : ''
       ]"
       :style="
         alwaysOpen
           ? 'max-height: none;'
-          : `max-height: ${
-              lazyLoadHeight
-                ? lazyLoadHeight
-                : isExpanded
-                ? contentHeight + 'px'
-                : '0px'
-            }`
+          : `max-height: ${isExpanded ? contentHeight + 'px' : '0px'}`
       "
     >
-      <div
-        v-if="!lazyLoad || isExpanded"
-        ref="content"
-        class="rounded-md text-sm pb-3 px-2 mt-1"
-      >
-        <slot>Panel contents</slot>
-      </div>
+      <template v-if="props.lazyLoad">
+        <div
+          v-if="isExpanded || props.alwaysOpen"
+          ref="content"
+          class="rounded-md text-sm pb-3 px-2 mt-1"
+        >
+          <slot>Panel contents</slot>
+        </div>
+      </template>
+
+      <template v-else>
+        <div ref="content" class="rounded-md text-sm pb-3 px-2 mt-1">
+          <slot>Panel contents</slot>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, unref, computed, onMounted } from 'vue'
+import { ref, unref, computed, nextTick } from 'vue'
 import type { Ref } from 'vue'
 import { ChevronDownIcon } from '@heroicons/vue/24/outline'
 import { FormButton } from '~~/src/lib'
@@ -119,8 +122,10 @@ const props = defineProps({
       }
     | undefined,
   alwaysOpen: Boolean,
-  lazyLoad: Boolean,
-  lazyLoadHeight: Number
+  lazyLoad: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const content: Ref<HTMLElement | null> = ref(null)
@@ -131,7 +136,11 @@ const backgroundClass = computed(() => {
   const classes = []
 
   if (!props.button && !props.alwaysOpen) {
-    classes.push('cursor-pointer')
+    classes.push('cursor-pointer', 'hover:bg-foundation')
+  }
+
+  if (isExpanded.value) {
+    classes.push('bg-foundation')
   }
 
   return classes
@@ -154,18 +163,12 @@ const titleClasses = computed(() => {
   }
 })
 
-const updateContentHeight = () => {
+const toggleExpansion = async () => {
+  isExpanded.value = !isExpanded.value
+
   if (isExpanded.value) {
+    await nextTick()
     contentHeight.value = (unref(content)?.scrollHeight || 0) + 64
   }
 }
-
-const toggleExpansion = () => {
-  isExpanded.value = !isExpanded.value
-  updateContentHeight()
-}
-
-onMounted(() => {
-  updateContentHeight()
-})
 </script>
