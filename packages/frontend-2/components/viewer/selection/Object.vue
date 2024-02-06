@@ -34,21 +34,43 @@
           ...categorisedValuePairs.nulls
         ]"
         :key="index"
+        class="flex w-full"
       >
         <div
-          :class="`grid grid-cols-3 ${
+          :class="`grid grid-cols-3 w-full ${
             kvp.value === null || kvp.value === undefined ? 'text-foreground-2' : ''
           }`"
         >
           <div
-            class="col-span-1 truncate text-xs font-bold"
+            class="col-span-1 truncate text-xs font-bold mr-2"
             :title="(kvp.key as string)"
           >
             {{ kvp.key }}
           </div>
-          <div class="col-span-2 pl-1 truncate text-xs" :title="(kvp.value as string)">
-            <!-- NOTE: can't do kvp.value || 'null' because 0 || 'null' = 'null' -->
-            {{ kvp.value === null ? 'null' : kvp.value }}
+          <div
+            class="group col-span-2 pl-1 truncate text-xs flex gap-1 items-center"
+            :title="(kvp.value as string)"
+          >
+            <button
+              class="flex gap-1 items-center w-full"
+              :class="isCopyable(kvp) ? 'cursor-pointer' : 'cursor-default'"
+              @click="handleCopy(kvp)"
+            >
+              <!-- NOTE: can't do kvp.value || 'null' because 0 || 'null' = 'null' -->
+              <span
+                class="border-b border-transparent truncate select-none"
+                :class="
+                  kvp.value === null
+                    ? ''
+                    : 'group-hover:border-outline-3 group-hover:max-w-[calc(100%-1rem)]'
+                "
+              >
+                {{ kvp.value === null ? 'null' : kvp.value }}
+              </span>
+              <div v-if="isCopyable(kvp)" class="opacity-0 group-hover:opacity-100 w-4">
+                <ClipboardDocumentIcon class="h-3 w-3" />
+              </div>
+            </button>
           </div>
         </div>
       </div>
@@ -103,6 +125,7 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { ChevronDownIcon } from '@heroicons/vue/24/solid'
+import { ClipboardDocumentIcon } from '@heroicons/vue/24/outline'
 import type { SpeckleObject } from '~~/lib/common/helpers/sceneExplorer'
 import { getHeaderAndSubheaderForSpeckleObject } from '~~/lib/object-sidebar/helpers'
 import { useInjectedViewerState } from '~~/lib/viewer/composables/setup'
@@ -123,6 +146,8 @@ const props = withDefaults(
   }>(),
   { debug: false, unfold: false, root: false, modifiedSibling: false }
 )
+
+const { copy } = useClipboard()
 
 const unfold = ref(props.unfold)
 
@@ -193,6 +218,20 @@ const headerAndSubheader = computed(() => {
   return getHeaderAndSubheaderForSpeckleObject(props.object)
 })
 
+const isCopyable = (kvp: Record<string, unknown>) => {
+  return kvp.value !== null && kvp.value !== undefined && typeof kvp.value !== 'object'
+}
+
+const handleCopy = async (kvp: Record<string, unknown>) => {
+  if (isCopyable(kvp)) {
+    const keyName = kvp.key as string
+    await copy(kvp.value as string, {
+      successMessage: `${keyName} copied to clipboard`,
+      failureMessage: `Failed to copy ${keyName} to clipboard`
+    })
+  }
+}
+
 const ignoredProps = [
   '__closure',
   'displayMesh',
@@ -254,6 +293,7 @@ const keyValuePairs = computed(() => {
 })
 
 const categorisedValuePairs = computed(() => {
+  console.log(keyValuePairs)
   return {
     primitives: keyValuePairs.value.filter(
       (item) => item.type !== 'object' && item.type !== 'array' && item.value !== null
